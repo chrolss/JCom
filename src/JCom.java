@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Scanner;
 
 public class JCom {
 	
@@ -106,7 +107,11 @@ public class JCom {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		JCom com = new JCom("client");
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Choose server or client");
+		String choice = scan.nextLine();
+		JCom com = new JCom(choice);
+		scan.close();
 		if (com.isServer){
 			com.startServer();
 			com.serverRead();	
