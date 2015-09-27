@@ -117,7 +117,6 @@ public class JCom {
 		System.out.println("Choose server or client");
 		String choice = scan.nextLine();
 		JCom com = new JCom(choice);
-		scan.close();
 		if (com.isServer){
 			com.startServer();
 			while(true){
@@ -130,6 +129,7 @@ public class JCom {
 				com.communicateWithServer();
 			}
 		}
+		scan.close();
 	}
 
 	public static String checkIP(){
