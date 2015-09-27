@@ -66,8 +66,8 @@ public class JCom {
 		  while(true){
 		      try{
 		       String line = serverIn.readLine();
-		//Send data back to client
-		       serverOut.println(line);
+		       System.out.println("line");
+		       serverOut.println("Got your message");
 		     } catch (IOException e) {
 		        System.out.println("Read failed");
 		        System.exit(-1);
