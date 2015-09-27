@@ -79,7 +79,7 @@ public class JCom {
 	public void connectToServer(){
 	//Create socket connection
 	   try{
-	     this.serverCon = new Socket("192.168.7.2", 4321);
+	     this.serverCon = new Socket("192.168.1.100", 4321);
 	     this.clientOut = new PrintWriter(serverCon.getOutputStream(), true);
 	     this.clientIn = new BufferedReader(new InputStreamReader(serverCon.getInputStream()));
 	     this.listen = false;
@@ -88,6 +88,7 @@ public class JCom {
 	     System.exit(1);
 	   } catch  (IOException e) {
 	     System.out.println("No I/O");
+	     e.printStackTrace();
 	     System.exit(1);
 	   }
 	}
