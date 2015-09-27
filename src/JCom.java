@@ -14,6 +14,8 @@ public class JCom {
 		//Used by all
 		boolean listen;
 		boolean isServer;
+		Scanner input = new Scanner(System.in);
+		String message;
 		//Used by server
 		ServerSocket server; 	
 		Socket client;			
@@ -47,23 +49,22 @@ public class JCom {
 		  }
 		try{
 		    this.client = server.accept();
+		    this.listen = true;
 		  } catch (IOException e) {
 		    System.out.println("Accept failed: 4321");
 		    System.exit(-1);
 		  }
+		  try{
+			   this.serverIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			   this.serverOut = new PrintWriter(client.getOutputStream(), true);
+			  } catch (IOException e) 
+			  {
+			    System.out.println("Initializing reader/writer error");
+			    System.exit(-1);
+			  }
 	}
 	
 	public void serverRead(){
-		  try{
-		   this.serverIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
-		   this.serverOut = new PrintWriter(client.getOutputStream(), true);
-		  } catch (IOException e) 
-		  {
-		    System.out.println("Read failed");
-		    System.exit(-1);
-		  }
-
-		  while(true){
 		      try{
 		       String line = serverIn.readLine();
 		       System.out.println(line);
@@ -72,7 +73,6 @@ public class JCom {
 		        System.out.println("Read failed");
 		        System.exit(-1);
 		     }
-		   }
 	}
 	
 
@@ -82,6 +82,7 @@ public class JCom {
 	     this.serverCon = new Socket("192.168.7.2", 4321);
 	     this.clientOut = new PrintWriter(serverCon.getOutputStream(), true);
 	     this.clientIn = new BufferedReader(new InputStreamReader(serverCon.getInputStream()));
+	     this.listen = false;
 	   } catch (UnknownHostException e) {
 	     System.out.println("Unknown host: 192.168.7.2");
 	     System.exit(1);
@@ -91,18 +92,23 @@ public class JCom {
 	   }
 	}
 	
-	public void speakToServer(){
-		clientOut.println("Hej from client");
-	}
-	
-	public void listenToServer(){
-	   try{
-	     String line = clientIn.readLine();
-	     System.out.println("Text received: " + line);
-	   } catch (IOException e){
-	     System.out.println("Read failed");
-	     System.exit(1);
-	   }
+	public void communicateWithServer(){
+		if (!listen){
+			System.out.print("Message: ");
+			message = input.nextLine();
+			clientOut.println(message);
+			this.listen = true;
+		}
+		if (listen){
+			try{
+				message = clientIn.readLine();
+				System.out.println("Text received: " + message);
+				listen = false;
+			} catch (IOException e){
+				System.out.println("Read failed");
+				System.exit(1);
+			}
+		}
 	} 
 	
 	public static void main(String[] args) {
@@ -114,12 +120,15 @@ public class JCom {
 		scan.close();
 		if (com.isServer){
 			com.startServer();
-			com.serverRead();	
+			while(true){
+				com.serverRead();	
+			}
 		}
 		if (!com.isServer){
 			com.connectToServer();
-			com.speakToServer();
-			com.listenToServer();
+			while(true){
+				com.communicateWithServer();
+			}
 		}
 	}
 
